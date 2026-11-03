@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Criar conta')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu}"></header>
+
+<main class="container">
+    <div class="caixa caixa-pequena">
+        <h1>Criar conta</h1>
+
+        <form th:action="@{/cadastro}" th:object="${usuarioForm}" method="post" novalidate>
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" th:field="*{nome}" th:errorclass="campo-erro">
+            <span class="msg-erro" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" th:field="*{email}" th:errorclass="campo-erro">
+            <span class="msg-erro" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" th:field="*{senha}" th:errorclass="campo-erro">
+            <span class="msg-erro" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
+
+            <label for="confirmacaoSenha">Confirmar senha</label>
+            <input type="password" id="confirmacaoSenha" th:field="*{confirmacaoSenha}" th:errorclass="campo-erro">
+            <span class="msg-erro" th:if="${#fields.hasErrors('confirmacaoSenha')}" th:errors="*{confirmacaoSenha}"></span>
+            <span class="msg-erro" th:if="${#fields.hasErrors('senhasIguais')}" th:errors="*{senhasIguais}"></span>
+
+            <button type="submit" class="botao">Cadastrar</button>
+        </form>
+
+        <p class="centro">Já tem conta? <a th:href="@{/login}">Entrar</a></p>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

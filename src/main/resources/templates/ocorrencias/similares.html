@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ocorrências parecidas')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu}"></header>
+
+<main class="container">
+    <h1>Já existem ocorrências parecidas perto desse local</h1>
+    <p>Se uma delas for o mesmo problema, confirme ela em vez de criar outra. Isso ajuda a prefeitura a priorizar.</p>
+
+    <div class="cartao" th:each="o : ${similares}">
+        <div class="cartao-topo">
+            <strong th:text="${o.protocolo}">OC202600001</strong>
+            <span th:class="'status status-' + ${o.status.name()}" th:text="${o.status.descricao}">Recebido</span>
+        </div>
+        <p th:text="${o.descricao}">Descrição</p>
+        <small th:text="'Registrada em ' + ${#temporals.format(o.dataCriacao, 'dd/MM/yyyy')} + ' · ' + ${#lists.size(o.confirmacoes)} + ' confirmação(ões)'"></small>
+        <form th:action="@{/ocorrencias/{p}/confirmar(p=${o.protocolo})}" method="post">
+            <button type="submit" class="botao">É o mesmo problema, confirmar</button>
+        </form>
+    </div>
+
+    <div class="caixa">
+        <h2>Não é nenhuma dessas?</h2>
+        <form th:action="@{/ocorrencias}" th:object="${ocorrenciaForm}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{categoria}">
+            <input type="hidden" th:field="*{descricao}">
+            <input type="hidden" th:field="*{latitude}">
+            <input type="hidden" th:field="*{longitude}">
+            <input type="hidden" name="ignorarSimilares" value="true">
+
+            <label for="foto">Anexe a foto novamente (opcional)</label>
+            <input type="file" id="foto" name="foto" accept="image/*">
+
+            <button type="submit" class="botao botao-secundario">Registrar como nova ocorrência</button>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

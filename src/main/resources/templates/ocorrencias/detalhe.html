@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ocorrência')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu}"></header>
+
+<main class="container">
+    <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+    <div class="caixa">
+        <div class="titulo-linha">
+            <h1 th:text="'Protocolo ' + ${ocorrencia.protocolo}">Protocolo</h1>
+            <span th:class="'status status-' + ${ocorrencia.status.name()}" th:text="${ocorrencia.status.descricao}">Recebido</span>
+        </div>
+
+        <table class="dados">
+            <tr><th>Categoria</th><td th:text="${ocorrencia.categoria.descricao}"></td></tr>
+            <tr><th>Descrição</th><td th:text="${ocorrencia.descricao}"></td></tr>
+            <tr><th>Data</th><td th:text="${#temporals.format(ocorrencia.dataCriacao, 'dd/MM/yyyy HH:mm')}"></td></tr>
+            <tr><th>Setor responsável</th><td th:text="${ocorrencia.setor != null} ? ${ocorrencia.setor.nome} : 'Não definido'"></td></tr>
+            <tr><th>Registrada por</th><td th:text="${ocorrencia.usuario.nome}"></td></tr>
+            <tr><th>Localização</th>
+                <td>
+                    <span th:text="${ocorrencia.latitude} + ', ' + ${ocorrencia.longitude}"></span>
+                    (<a th:href="'https://www.google.com/maps?q=' + ${ocorrencia.latitude} + ',' + ${ocorrencia.longitude}" target="_blank">ver no mapa</a>)
+                </td>
+            </tr>
+            <tr><th>Confirmações</th><td th:text="${#lists.size(ocorrencia.confirmacoes)}"></td></tr>
+        </table>
+
+        <img th:if="${ocorrencia.fotoUrl != null}" th:src="${ocorrencia.fotoUrl}" class="foto" alt="Foto da ocorrência">
+    </div>
+
+    <div class="caixa" th:if="${session.usuarioLogado.papel.name() == 'FUNCIONARIO'}">
+        <h2>Alterar status</h2>
+        <form th:action="@{/ocorrencias/{p}/status(p=${ocorrencia.protocolo})}" method="post" class="linha">
+            <select name="status">
+                <option th:each="s : ${statusList}" th:value="${s}" th:text="${s.descricao}"
+                        th:selected="${s == ocorrencia.status}"></option>
+            </select>
+            <button type="submit" class="botao">Salvar</button>
+        </form>
+    </div>
+
+    <div class="caixa">
+        <h2>Histórico</h2>
+        <ul class="historico">
+            <li th:each="h : ${ocorrencia.historico}">
+                <strong th:text="${#temporals.format(h.data, 'dd/MM/yyyy HH:mm')}"></strong> -
+                <span th:if="${h.statusAnterior == null}">Ocorrência registrada como</span>
+                <span th:if="${h.statusAnterior != null}" th:text="${h.statusAnterior.descricao} + ' →'"></span>
+                <span th:text="${h.statusNovo.descricao}"></span>
+                <small th:text="'(' + ${h.usuario.nome} + ')'"></small>
+            </li>
+        </ul>
+    </div>
+
+    <a th:href="@{/ocorrencias}">&larr; Voltar</a>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

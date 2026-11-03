@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nova ocorrência')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu}"></header>
+
+<main class="container">
+    <div class="caixa">
+        <h1>Registrar ocorrência</h1>
+
+        <form th:action="@{/ocorrencias}" th:object="${ocorrenciaForm}" method="post" enctype="multipart/form-data" novalidate>
+            <label for="categoria">Categoria</label>
+            <select id="categoria" th:field="*{categoria}" th:errorclass="campo-erro">
+                <option value="">Selecione...</option>
+                <option th:each="c : ${categorias}" th:value="${c}" th:text="${c.descricao}"></option>
+            </select>
+            <span class="msg-erro" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></span>
+
+            <label for="descricao">Descrição do problema</label>
+            <textarea id="descricao" rows="4" th:field="*{descricao}" th:errorclass="campo-erro"
+                      placeholder="Ex: Poste apagado em frente ao número 120"></textarea>
+            <span class="msg-erro" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></span>
+
+            <div class="linha">
+                <div>
+                    <label for="latitude">Latitude</label>
+                    <input type="number" step="any" id="latitude" th:field="*{latitude}" th:errorclass="campo-erro">
+                    <span class="msg-erro" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></span>
+                </div>
+                <div>
+                    <label for="longitude">Longitude</label>
+                    <input type="number" step="any" id="longitude" th:field="*{longitude}" th:errorclass="campo-erro">
+                    <span class="msg-erro" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></span>
+                </div>
+            </div>
+            <button type="button" class="botao botao-secundario" onclick="pegarLocalizacao()">Usar minha localização</button>
+
+            <label for="foto">Foto (opcional)</label>
+            <input type="file" id="foto" name="foto" accept="image/*">
+
+            <button type="submit" class="botao">Enviar ocorrência</button>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+
+<script>
+    function pegarLocalizacao() {
+        if (!navigator.geolocation) {
+            alert("Seu navegador não suporta localização.");
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            document.getElementById("latitude").value = pos.coords.latitude.toFixed(6);
+            document.getElementById("longitude").value = pos.coords.longitude.toFixed(6);
+        }, function () {
+            alert("Não foi possível obter a localização. Preencha manualmente.");
+        });
+    }
+</script>
+</body>
+</html>

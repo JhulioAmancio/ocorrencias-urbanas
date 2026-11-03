@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ocorrências')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: menu}"></header>
+
+<main class="container">
+    <div class="titulo-linha">
+        <h1 th:text="${session.usuarioLogado.papel.name() == 'FUNCIONARIO'} ? 'Todas as ocorrências' : 'Minhas ocorrências'">Ocorrências</h1>
+        <a th:href="@{/ocorrencias/nova}" class="botao"
+           th:if="${session.usuarioLogado.papel.name() == 'CIDADAO'}">+ Nova ocorrência</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+    <p th:if="${#lists.isEmpty(ocorrencias)}" class="vazio">Nenhuma ocorrência registrada ainda.</p>
+
+    <table th:unless="${#lists.isEmpty(ocorrencias)}" class="tabela">
+        <thead>
+        <tr>
+            <th>Protocolo</th>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="o : ${ocorrencias}">
+            <td th:text="${o.protocolo}">OC202600001</td>
+            <td th:text="${o.categoria.descricao}">Buracos</td>
+            <td th:text="${#strings.abbreviate(o.descricao, 50)}">Descrição</td>
+            <td th:text="${#temporals.format(o.dataCriacao, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+            <td><span th:class="'status status-' + ${o.status.name()}" th:text="${o.status.descricao}">Recebido</span></td>
+            <td><a th:href="@{/ocorrencias/{p}(p=${o.protocolo})}">Ver</a></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

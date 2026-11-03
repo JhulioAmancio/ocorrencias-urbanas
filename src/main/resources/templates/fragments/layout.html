@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' - Ocorrências Urbanas'">Ocorrências Urbanas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header th:fragment="menu" class="topo">
+    <div class="container topo-conteudo">
+        <a th:href="@{/}" class="logo">Ocorrências Urbanas</a>
+        <nav th:if="${session.usuarioLogado != null}">
+            <a th:href="@{/ocorrencias}">Ocorrências</a>
+            <a th:href="@{/ocorrencias/nova}"
+               th:if="${session.usuarioLogado.papel.name() == 'CIDADAO'}">Nova ocorrência</a>
+            <span class="usuario" th:text="${session.usuarioLogado.nome}">Fulano</span>
+            <a th:href="@{/logout}">Sair</a>
+        </nav>
+    </div>
+</header>
+
+<div th:fragment="mensagens">
+    <p class="alerta sucesso" th:if="${sucesso}" th:text="${sucesso}"></p>
+    <p class="alerta erro" th:if="${erro}" th:text="${erro}"></p>
+</div>
+
+<footer th:fragment="rodape" class="rodape">
+    Projeto Integrador - ADS 3º semestre
+</footer>
+
+</body>
+</html>
